@@ -1,0 +1,6 @@
+#!/bin/sh
+
+virtualenv-sh-verify-workon-home || return 1
+virtualenv-sh-verify-active-virtualenv || return 1
+
+cd "$(virtualenv-sh-site-packages-path)"/"$1"

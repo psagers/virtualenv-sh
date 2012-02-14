@@ -1,0 +1,7 @@
+#!/bin/sh
+
+
+if [ -z "$WORKON_HOME" ] || [ ! -d "$WORKON_HOME" ]; then
+    echo "ERROR: WORKON_HOME not set or does not exist" >&2
+    return 1
+fi

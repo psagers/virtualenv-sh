@@ -1,0 +1,25 @@
+#!/bin/sh
+
+local chpwd chpwd_functions
+local env_name="$1"
+
+virtualenv-sh-verify-workon-home || return 1
+
+
+if [ -z "$env_name" ]; then
+    echo "Please specify an enviroment." >&2
+    return 1
+fi
+
+env_dir="$WORKON_HOME/$env_name"
+
+if [ "$VIRTUAL_ENV" = "$env_dir" ] && ! deactivate; then
+    echo "ERROR: unable to deactivate ${env_name}"
+    return 1
+fi
+
+virtualenv-sh-run-hook "prermvirtualenv" "$env_name"
+
+rm -rf "$env_dir"
+
+virtualenv-sh-run-hook "postrmvirtualenv" "$env_name"
