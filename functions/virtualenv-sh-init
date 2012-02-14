@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ -z "$WORKON_HOME" ]; then
+    WORKON_HOME="~/.virtualenvs"
+fi
+
+if [ ! -e "$WORKON_HOME" ]; then
+    echo "Creating $WORKON_HOME" >&2
+    mkdir "$WORKON_HOME" || return 2
+fi
+
+if ! virtualenv-sh-run-hook "initialize"; then
+    echo "Error running initialize hook"
+    return 2
+fi
+
+virtualenv-sh-init-completion
+
+VIRTUALENV_SH_INITIALIZED=1

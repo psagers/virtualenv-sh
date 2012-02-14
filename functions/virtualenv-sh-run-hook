@@ -1,0 +1,24 @@
+#!/bin/sh
+
+local hook=$1 env_name=$2
+
+if [ -z "$env_name" ] && [ -n "$VIRTUAL_ENV" ]; then
+    env_name=$(basename $VIRTUAL_ENV)
+fi
+
+
+case ${hook} in
+    initialize|\
+    premkvirtualenv|postmkvirtualenv|\
+    precpvirtualenv|postcpvirtualenv|\
+    prermvirtualenv|postrmvirtualenv)
+        virtualenv-sh-run-global-hook ${hook} ${env_name};;
+
+    preactivate|postactivate)
+        virtualenv-sh-run-global-hook ${hook} ${env_name}
+        virtualenv-sh-run-local-hook ${hook} ${env_name};;
+
+    predeactivate|postdeactivate)
+        virtualenv-sh-run-local-hook ${hook} ${env_name}
+        virtualenv-sh-run-global-hook ${hook} ${env_name};;
+esac

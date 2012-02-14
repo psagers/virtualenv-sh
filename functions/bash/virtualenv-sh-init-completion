@@ -1,0 +1,23 @@
+#!/bin/bash
+
+
+_virtualenv-sh-complete-virtualenvs () {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=( $(compgen -W "`virtualenv-sh-virtualenvs`" -- ${cur}) )
+}
+
+_virtualenv-sh-complete-cdvirtualenv () {
+    local cur="$2"
+    COMPREPLY=( $(cdvirtualenv && compgen -d -- "${cur}" ) )
+}
+
+_virtualenv-sh-complete-sitepackages () {
+    local cur="$2"
+    COMPREPLY=( $(cdsitepackages && compgen -d -- "${cur}" ) )
+}
+
+
+complete -o default -o nospace -F _virtualenv-sh-complete-virtualenvs workon
+complete -o default -o nospace -F _virtualenv-sh-complete-virtualenvs rmvirtualenv
+complete -o nospace -F _virtualenv-sh-complete-cdvirtualenv -S/ cdvirtualenv
+complete -o nospace -F _virtualenv-sh-complete-sitepackages -S/ cdsitepackages
