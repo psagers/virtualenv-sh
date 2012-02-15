@@ -70,7 +70,16 @@ local_hooks()
 
 report_hook_invoked()
 {
-    invoked_hooks="${invoked_hooks} $1/$2"
+    if [ -n "${invoked_hooks:-}" ]; then
+        invoked_hooks="$invoked_hooks $1/$2"
+    else
+        invoked_hooks="$1/$2"
+    fi
+}
+
+clear_hooks_invoked()
+{
+    unset invoked_hooks
 }
 
 
@@ -80,11 +89,39 @@ assertHooksInvoked()
 }
 
 
-suite()
+#
+# Test cases
+#
+test_initialized()
 {
-    for testcase in testcases/*; do
-        . $testcase
-    done
+    assertTrue "[ -d $WORKON_HOME ]";
+    assertEquals $(lsvirtualenvs) ""
+}
+
+test_one_virtualenv()
+{
+    mkvirtualenv test1 >/dev/null
+
+    assertTrue "[ -e $WORKON_HOME/test1/bin/activate ]"
+    assertEquals "test1 " "$(lsvirtualenvs | tr $'\n' ' ')"
+    assertHooksInvoked global/premkvirtualenv global/postmkvirtualenv \
+                       global/preactivate test1/preactivate \
+                       global/postactivate test1/postactivate
+}
+
+test_two_virtualenvs()
+{
+    mkvirtualenv test1 >/dev/null
+    clear_hooks_invoked
+    mkvirtualenv test2 >/dev/null
+
+    assertEquals "test1 test2 " "$(lsvirtualenvs | tr $'\n' ' ')"
+    assertEquals "$VIRTUAL_ENV" "$WORKON_HOME/test2"
+    assertHooksInvoked global/premkvirtualenv global/postmkvirtualenv \
+                       test1/predeactivate global/predeactivate \
+                       test1/postdeactivate global/postdeactivate \
+                       global/preactivate test2/preactivate \
+                       global/postactivate test2/postactivate
 }
 
 

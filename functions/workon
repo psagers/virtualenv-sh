@@ -1,15 +1,13 @@
 #!/bin/sh
 
-
-typeset env_name="$1"
-if [ -z "$env_name" ]; then
+if [ -z "${1:-}" ]; then
     lsvirtualenvs
     return 1
 fi
 
-activate="$WORKON_HOME/$env_name/bin/activate"
+activate="$WORKON_HOME/$1/bin/activate"
 if [ ! -f "$activate" ]; then
-    echo "ERROR: '$WORKON_HOME/$env_name' does not exist." >&2
+    echo "ERROR: '$WORKON_HOME/$1' is not a virtualenv." >&2
     return 1
 fi
 
@@ -17,9 +15,12 @@ if type deactivate >/dev/null 2>&1; then
     deactivate
 fi
 
-virtualenv_sh_run_hook "preactivate" "$env_name"
+virtualenv_sh_run_hook "preactivate" "$1"
 
+# virtualenv's scripts choke on nounset
+virtualenv_sh_save_options && set +o nounset
 source "$activate"
+virtualenv_sh_restore_options
 
 # Save the deactivate function from virtualenv under a different name
 virtualen_sh_original_deactivate=`typeset -f deactivate | sed 's/deactivate/virtualenv_deactivate/g'`
@@ -35,11 +36,13 @@ eval 'deactivate () {
     virtualenv_sh_run_hook "predeactivate" "$old_env"
     
     # Call the original function.
+    virtualenv_sh_save_options && set +o nounset
     virtualenv_deactivate "$@"
+    virtualenv_sh_restore_options
 
     virtualenv_sh_run_hook "postdeactivate" "$old_env"
 
-    if [ ! "$1" = "nondestructive" ]; then
+    if [ ! "${1:-}" = "nondestructive" ]; then
         # Remove this function
         unset -f virtualenv_deactivate >/dev/null 2>&1
         unset -f deactivate >/dev/null 2>&1

@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 if [ -z "${VIRTUAL_ENV}" ] || [ ! -d "${VIRTUAL_ENV}" ]; then
     echo "ERROR: no virtualenv active, or active virtualenv is missing" >&2
     return 1
