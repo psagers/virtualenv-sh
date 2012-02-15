@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if [ -z "$WORKON_HOME" ]; then
+    WORKON_HOME="~/.virtualenvs"
+fi
+
+if [ -e "$WORKON_HOME" ] && [ ! -d "$WORKON_HOME" ]; then
+    echo "ERROR: $WORKON_HOME exists but is not a directory."
+    return 1
+fi
+
+if [ ! -e "$WORKON_HOME" ]; then
+    echo "Creating $WORKON_HOME" >&2
+    mkdir "$WORKON_HOME" || return 2
+
+    for hook in initialize \
+                premkvirtualenv postmkvirtualenv \
+                prermvirtualenv postrmvirtualenv \
+                preactivate postactivate \
+                predeactivate postdeactivate; do
+        echo "#!/bin/sh" > "$WORKON_HOME"/$hook    
+    done
+fi
+
+virtualenv_sh_run_hook "initialize"
+
+virtualenv_sh_init_completion

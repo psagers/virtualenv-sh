@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# $1 is the hook name
+# $2 is the env name
+
+env_path="${WORKON_HOME}/$2"
+
+if [ -n "$env_path" ] && [ -r "$env_path/bin/$1" ]; then
+    source "$env_path/bin/$1"
+fi

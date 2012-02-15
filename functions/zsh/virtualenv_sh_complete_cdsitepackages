@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+reply=( $(unfunction chpwd 2>/dev/null; unset chpwd_functions 2>/dev/null; cdsitepackages && ls -d ${1}*) )
