@@ -26,7 +26,7 @@ bash_functions = bash/virtualenv_sh_init_completion
 zsh_functions  = \
 	zsh/virtualenv_sh_init_completion \
 	zsh/virtualenv_sh_complete_cdvirtualenv \
-	zsh/virtualenv_sh_complete_cdsitepackages \
+	zsh/virtualenv_sh_complete_sitepackages \
 	zsh/_virtualenv_sh_complete_virtualenvs
 
 
