@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+reply=( $(virtualenv_sh_virtualenvs) )

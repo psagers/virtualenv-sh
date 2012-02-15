@@ -1,0 +1,6 @@
+#!/bin/bash
+
+complete -o default -o nospace -F _virtualenv_sh_complete_virtualenvs workon
+complete -o default -o nospace -F _virtualenv_sh_complete_virtualenvs rmvirtualenv
+complete -o nospace -F _virtualenv_sh_complete_cdvirtualenv -S/ cdvirtualenv
+complete -o nospace -F _virtualenv_sh_complete_sitepackages -S/ cdsitepackages

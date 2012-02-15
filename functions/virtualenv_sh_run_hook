@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# $1 is the hook name
+# $2 (optional) is the environment name
+
+if [ ${2:-} ]; then
+    env_name=$2
+elif [ ${VIRTUAL_ENV:-} ]; then
+    env_name=$(basename "$VIRTUAL_ENV")
+else
+    env_name=
+fi
+
+case $1 in
+    initialize|premkvirtualenv|postmkvirtualenv|prermvirtualenv|postrmvirtualenv)
+        virtualenv_sh_run_global_hook $1 ${env_name};;
+
+    preactivate|postactivate)
+        virtualenv_sh_run_global_hook $1 ${env_name}
+        virtualenv_sh_run_local_hook $1 ${env_name};;
+
+    predeactivate|postdeactivate)
+        virtualenv_sh_run_local_hook $1 ${env_name}
+        virtualenv_sh_run_global_hook $1 ${env_name};;
+esac

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-virtualenv-sh-verify-workon-home || return 1
-virtualenv-sh-verify-active-virtualenv || return 1
+virtualenv_sh_verify_workon_home || return 1
+virtualenv_sh_verify_active_virtualenv || return 1
 
 cd "$VIRTUAL_ENV"/"$1"

@@ -3,7 +3,7 @@
 local chpwd chpwd_functions
 local env_name="$1"
 
-virtualenv-sh-verify-workon-home || return 1
+virtualenv_sh_verify_workon_home || return 1
 
 
 if [ -z "$env_name" ]; then
@@ -18,8 +18,8 @@ if [ "$VIRTUAL_ENV" = "$env_dir" ] && ! deactivate; then
     return 1
 fi
 
-virtualenv-sh-run-hook "prermvirtualenv" "$env_name"
+virtualenv_sh_run_hook "prermvirtualenv" "$env_name"
 
 rm -rf "$env_dir"
 
-virtualenv-sh-run-hook "postrmvirtualenv" "$env_name"
+virtualenv_sh_run_hook "postrmvirtualenv" "$env_name"

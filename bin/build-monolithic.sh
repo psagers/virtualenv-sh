@@ -1,11 +1,8 @@
 #!/bin/sh
 
 
-function gen_function ()
-{
-    file=$1
-
-	echo "function ${file##*/} ()"
+for file in $*; do
+	echo "${file##*/}()"
     echo "{"
 
     cat ${file} | grep -v '^#!' | sed -e 's/^/    /'
@@ -13,11 +10,6 @@ function gen_function ()
     echo "}"
     echo
     echo
-}
-
-
-for file in "$@"; do
-    gen_function ${file}
 done
 
-echo "virtualenv-sh-init";
+echo "virtualenv_sh_init";

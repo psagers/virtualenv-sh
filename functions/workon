@@ -7,7 +7,7 @@ if [ -z "$env_name" ]; then
     return 1
 fi
 
-activate="$WORKON_HOME/$env_name/$VIRTUALENVWRAPPER_ENV_BIN_DIR/activate"
+activate="$WORKON_HOME/$env_name/bin/activate"
 if [ ! -f "$activate" ]; then
     echo "ERROR: '$WORKON_HOME/$env_name' does not exist." >&2
     return 1
@@ -17,7 +17,7 @@ if type deactivate >/dev/null 2>&1; then
     deactivate
 fi
 
-virtualenv-sh-run-hook "preactivate" "$env_name"
+virtualenv_sh_run_hook "preactivate" "$env_name"
 
 source "$activate"
 
@@ -28,21 +28,22 @@ unset -f deactivate >/dev/null 2>&1
 
 # Replace the deactivate() function with a wrapper.
 eval 'deactivate () {
+    old_env=${VIRTUAL_ENV##*/}
+    
     # Call the local hook before the global so we can undo
     # any settings made by the local postactivate first.
-    virtualenv-sh-run-hook "predeactivate"
-    
-    env_postdeactivate_hook="$VIRTUAL_ENV/$VIRTUALENVWRAPPER_ENV_BIN_DIR/postdeactivate"
-    old_env=$(basename "$VIRTUAL_ENV")
+    virtualenv_sh_run_hook "predeactivate" "$old_env"
     
     # Call the original function.
-    virtualenv_deactivate $1
+    virtualenv_deactivate "$@"
 
-    virtualenv-sh-run-hook "postdeactivate" "$old_env"
+    virtualenv_sh_run_hook "postdeactivate" "$old_env"
 
-    # Remove this function
-    unset -f virtualenv_deactivate >/dev/null 2>&1
-    unset -f deactivate >/dev/null 2>&1
+    if [ ! "$1" = "nondestructive" ]; then
+        # Remove this function
+        unset -f virtualenv_deactivate >/dev/null 2>&1
+        unset -f deactivate >/dev/null 2>&1
+    fi
 }'
 
-virtualenv-sh-run-hook "postactivate"
+virtualenv_sh_run_hook "postactivate"

@@ -4,19 +4,19 @@
 local chpwd chpwd_functions
 
 
-virtualenv-sh-verify-workon-home || return 1
+virtualenv_sh_verify_workon_home || return 1
 
 eval "env_name=\$$#"
 
 # If the last argument is an option, assume we're not actually making a
 # virtualenv.
 if [ ${env_name#-} != ${env_name} ]; then
-    unset env_name
+    env_name=
 fi
 
 
 if [ ${env_name} ]; then
-    virtualenv-sh-run-hook "premkvirtualenv" "$env_name"
+    virtualenv_sh_run_hook "premkvirtualenv" "$env_name"
 fi
 
 ( cd ${WORKON_HOME}
@@ -24,7 +24,7 @@ fi
 ) || return 1
 
 if [ ${env_name} ]; then
-    workon ${env_name}
+    virtualenv_sh_run_hook "postmkvirtualenv" "$env_name"
 
-    virtualenv-sh-run-hook "postmkvirtualenv"
+    workon ${env_name}
 fi

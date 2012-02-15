@@ -1,0 +1,4 @@
+#!/bin/bash
+
+local cur="${COMP_WORDS[COMP_CWORD]}"
+COMPREPLY=( $(compgen -W "`virtualenv-sh-virtualenvs`" -- ${cur}) )

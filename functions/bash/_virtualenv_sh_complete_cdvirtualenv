@@ -1,0 +1,4 @@
+#!/bin/bash
+
+local cur="$2"
+COMPREPLY=( $(cdvirtualenv && compgen -d -- "${cur}" ) )
