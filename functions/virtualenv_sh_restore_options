@@ -1,6 +1,6 @@
 #!/bin/sh
 
 if [ -r /tmp/virtualenv_sh_saved_options ]; then
-    . /tmp/virtualenv_sh_saved_options
+    . /tmp/virtualenv_sh_saved_options 2>/dev/null
     rm /tmp/virtualenv_sh_saved_options
 fi
