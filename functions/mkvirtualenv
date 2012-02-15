@@ -1,9 +1,5 @@
 #!/bin/sh
 
-
-local chpwd chpwd_functions
-
-
 virtualenv_sh_verify_workon_home || return 1
 
 eval "env_name=\$$#"

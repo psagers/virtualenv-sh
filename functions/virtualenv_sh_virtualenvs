@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 for item in $WORKON_HOME/*; do
     if [ -r "$item/bin/activate" ]; then
         basename $item

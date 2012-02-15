@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 virtualenv_sh_verify_active_virtualenv || return 1
 
 # There should only be one directory in lib, named after the python version.

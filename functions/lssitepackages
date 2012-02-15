@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 virtualenv_sh_verify_workon_home || return 1
 virtualenv_sh_verify_active_virtualenv || return 1
 

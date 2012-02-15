@@ -1,0 +1,3 @@
+#!/bin/sh
+
+set +o >| /tmp/virtualenv_sh_saved_options
