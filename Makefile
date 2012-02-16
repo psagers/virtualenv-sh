@@ -7,10 +7,14 @@ base_functions = \
 	lsvirtualenvs \
 	mkvirtualenv \
 	rmvirtualenv \
+	virtualenv_sh_add_hook \
 	virtualenv_sh_init \
+	virtualenv_sh_init_shell \
+	virtualenv_sh_remove_hook \
 	virtualenv_sh_restore_options \
 	virtualenv_sh_run_global_hook \
 	virtualenv_sh_run_hook \
+	virtualenv_sh_run_hook_functions \
 	virtualenv_sh_run_local_hook \
 	virtualenv_sh_save_options \
 	virtualenv_sh_site_packages_path \
@@ -19,44 +23,53 @@ base_functions = \
 	virtualenv_sh_virtualenvs \
 	workon
 
-sh_functions   = sh/virtualenv_sh_init_completion
+bash_functions = \
+	bash/_virtualenv_sh_complete_cdvirtualenv \
+	bash/_virtualenv_sh_complete_sitepackages \
+	bash/_virtualenv_sh_complete_virtualenvs \
+	bash/virtualenv_sh_init_shell
 
-bash_functions = bash/virtualenv_sh_init_completion
-
-zsh_functions  = \
-	zsh/virtualenv_sh_init_completion \
+zsh_functions = \
+	zsh/_virtualenv_sh_complete_virtualenvs \
+	zsh/virtualenv_sh_add_hook \
 	zsh/virtualenv_sh_complete_cdvirtualenv \
 	zsh/virtualenv_sh_complete_sitepackages \
-	zsh/_virtualenv_sh_complete_virtualenvs
+	zsh/virtualenv_sh_init_shell \
+	zsh/virtualenv_sh_remove_hook
 
 
 all: sh bash zsh
 
 sh: build/virtualenv-sh.sh
-build/virtualenv-sh.sh: $(base_functions) $(sh_functions)
-	@mkdir -p build
-	bin/build-monolithic.sh $^ > build/virtualenv-sh.sh
+build/virtualenv-sh.sh: $(base_functions)
+	@mkdir -p build/sh
+	cp $^ build/sh
+	bin/build-monolithic.sh build/sh/* > build/virtualenv-sh.sh
+	@rm -r build/sh
 	@echo
 
 bash: build/virtualenv-sh.bash
 build/virtualenv-sh.bash: $(base_functions) $(bash_functions)
-	@mkdir -p build
-	bin/build-monolithic.sh $^ > build/virtualenv-sh.bash
+	@mkdir -p build/bash
+	cp $^ build/bash
+	bin/build-monolithic.sh build/bash/* > build/virtualenv-sh.bash
+	@rm -r build/bash
 	@echo
 
 zsh: build/virtualenv-sh.zsh build/virtualenv-sh.zwc
 build/virtualenv-sh.zsh build/virtualenv-sh.zwc: $(base_functions) $(zsh_functions)
-	@mkdir -p build
-	bin/build-monolithic.sh $^ > build/virtualenv-sh.zsh
-	bin/compile-all.zsh $^
+	@mkdir -p build/zsh
+	cp $^ build/zsh
+	bin/build-monolithic.sh build/zsh/* > build/virtualenv-sh.zsh
+	bin/compile-all.zsh build/zsh/*
+	@rm -r build/zsh
 	@echo
-
 
 install: all
 	cp build/* /usr/local/bin
 
 clean:
-	rm -f build/*
+	rm -rf build/*
 
 
 test: test-bash test-ksh test-zsh

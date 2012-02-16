@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# The inverse of virtualenv_sh_add_hook: removes all occurances of a given hook
+# function from our list (there should be at most one).
+#
+# $1 is the hook name
+# $2 is the function name
+
+_virtualenv_sh_hook_functions=$(
+    for item in ${_virtualenv_sh_hook_functions:-}; do
+        if [ ! $item = $1/$2 ]; then
+            echo -n " $item"
+        fi
+    done
+)
