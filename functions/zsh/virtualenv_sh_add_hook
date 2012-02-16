@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+# zsh is much happier with arrays, especially with sh_word_split off.
+
+for item in ${_virtualenv_sh_hook_functions:-}; do
+    if [ $item = $1/$2 ]; then
+        return 0
+    fi
+done
+
+_virtualenv_sh_hook_functions=(${_virtualenv_sh_hook_functions:-} $1/$2)

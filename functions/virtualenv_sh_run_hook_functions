@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Runs all registered hook functions for a given hook name.
+
+for item in ${_virtualenv_sh_hook_functions:-}; do
+    if [ ${item%%/*} = $1 ]; then
+        eval "${item#*/}"
+    fi
+done

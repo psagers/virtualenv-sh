@@ -1,13 +1,15 @@
 #!/bin/sh
 
 if [ -z "$WORKON_HOME" ]; then
-    WORKON_HOME="~/.virtualenvs"
+    WORKON_HOME="$HOME/.virtualenvs"
 fi
 
 if [ -e "$WORKON_HOME" ] && [ ! -d "$WORKON_HOME" ]; then
     echo "ERROR: $WORKON_HOME exists but is not a directory."
     return 1
 fi
+
+_virtualenv_sh_hook_functions=
 
 if [ ! -e "$WORKON_HOME" ]; then
     echo "Creating $WORKON_HOME" >&2
@@ -22,6 +24,6 @@ if [ ! -e "$WORKON_HOME" ]; then
     done
 fi
 
-virtualenv_sh_run_hook "initialize"
+virtualenv_sh_init_shell
 
-virtualenv_sh_init_completion
+virtualenv_sh_run_hook "initialize"

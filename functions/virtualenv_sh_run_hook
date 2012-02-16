@@ -23,3 +23,5 @@ case $1 in
         virtualenv_sh_run_local_hook $1 ${env_name}
         virtualenv_sh_run_global_hook $1 ${env_name};;
 esac
+
+#virtualenv_sh_run_hook_functions $1 ${env_name}

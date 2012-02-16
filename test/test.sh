@@ -12,32 +12,6 @@ oneTimeSetUp()
 
     . $virtualenv_sh 
 
-    init_test_hooks
-}
-
-
-init_test_hooks()
-{
-    for hook in $(global_hooks); do
-        echo "\$(( global_${hook}_count += 1 ))" > $WORKON_HOME/$hook
-    done
-
-    echo >> $WORKON_HOME/postmkvirtualenv
-    for hook in $(local_hooks); do
-        echo "local_${hook}_count=0" >> $WORKON_HOME/postmkvirtualenv
-        echo "echo \$(( \${VIRTUAL_ENV##*/}_${hook}_count += 1 )) > \$VIRTUAL_ENV/bin/${hook}" >> $WORKON_HOME/postmkvirtualenv
-    done
-}
-
-
-oneTimeTearDown()
-{
-    rm -rf workon_home
-}
-
-
-setUp()
-{
     for hook in $(global_hooks); do
         echo "report_hook_invoked global ${hook}" > $WORKON_HOME/$hook
     done
@@ -47,8 +21,19 @@ setUp()
           echo "echo report_hook_invoked \${env_name} ${hook} > \${WORKON_HOME}/\${env_name}/bin/${hook}"
       done
     } >> $WORKON_HOME/postmkvirtualenv
+}
 
-    invoked_hooks=
+
+oneTimeTearDown()
+{
+    rm -rf workon_home
+}
+
+
+tearDown()
+{
+    clear_hooks_invoked
+    clear_custom_hooks_invoked
 }
 
 
@@ -82,10 +67,40 @@ clear_hooks_invoked()
     unset invoked_hooks
 }
 
-
 assertHooksInvoked()
 {
-    assertEquals "Mismatch in invoked hooks" "$*" "$invoked_hooks"
+    assertEquals "Mismatch in invoked hooks" "$*" "${invoked_hooks:-}"
+}
+
+
+report_hook_func_invoked()
+{
+    if [ -n "${invoked_hook_funcs:-}" ]; then
+        invoked_hook_funcs="$invoked_hook_funcs $1"
+    else
+        invoked_hook_funcs="$1"
+    fi
+}
+
+clear_custom_hooks_invoked()
+{
+    unset invoked_hook_funcs
+}
+
+assertHookFuncsInvoked()
+{
+    assertEquals "Mismatch in invoked hook funcs" "$*" "$invoked_hook_funcs"
+}
+
+
+custom_hook_1()
+{
+    report_hook_func_invoked custom_hook_1
+}
+
+custom_hook_2()
+{
+    report_hook_func_invoked custom_hook_2
 }
 
 
@@ -122,6 +137,62 @@ test_two_virtualenvs()
                        test1/postdeactivate global/postdeactivate \
                        global/preactivate test2/preactivate \
                        global/postactivate test2/postactivate
+}
+
+test_add_hook()
+{
+    virtualenv_sh_add_hook preactivate custom_hook_1
+
+    assertEquals "preactivate/custom_hook_1" ${_virtualenv_sh_hook_functions% }
+}
+
+test_remove_hook()
+{
+    virtualenv_sh_add_hook preactivate custom_hook_1
+    virtualenv_sh_remove_hook preactivate custom_hook_1
+
+    assertEquals "" "${_virtualenv_sh_hook_functions}"
+}
+
+test_remove_hook_empty()
+{
+    virtualenv_sh_remove_hook preactivate custom_hook_1
+
+    assertEquals "" "${_virtualenv_sh_hook_functions}"
+}
+
+test_duplicate_hook()
+{
+    virtualenv_sh_add_hook preactivate custom_hook_1
+    virtualenv_sh_add_hook preactivate custom_hook_1
+
+    assertEquals "preactivate/custom_hook_1" "$(echo $_virtualenv_sh_hook_functions)"
+}
+
+test_two_hooks()
+{
+    virtualenv_sh_add_hook preactivate custom_hook_1
+    virtualenv_sh_add_hook preactivate custom_hook_2
+
+    assertEquals "preactivate/custom_hook_1 preactivate/custom_hook_2" "$(echo $_virtualenv_sh_hook_functions)"
+}
+
+test_two_minus_one_hooks()
+{
+    virtualenv_sh_add_hook preactivate custom_hook_1
+    virtualenv_sh_add_hook preactivate custom_hook_2
+    virtualenv_sh_remove_hook preactivate custom_hook_1
+
+    assertEquals "preactivate/custom_hook_2" "$(echo $_virtualenv_sh_hook_functions)"
+}
+
+test_run_hook()
+{
+    virtualenv_sh_add_hook preactivate custom_hook_1
+    virtualenv_sh_add_hook postactivate custom_hook_2
+    virtualenv_sh_run_hook_functions postactivate
+
+    assertHookFuncsInvoked "custom_hook_2"
 }
 
 

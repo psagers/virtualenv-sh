@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Adds a function to be executed for a particular hook. If it's already in the
+# list, this has no effect.
+#
+# $1 is the hook name
+# $2 is the function name
+
+for item in ${_virtualenv_sh_hook_functions:-}; do
+    if [ $item = $1/$2 ]; then
+        return 0
+    fi
+done
+
+_virtualenv_sh_hook_functions="${_virtualenv_sh_hook_functions:-} $1/$2"
