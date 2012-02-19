@@ -17,9 +17,9 @@ class VirtualenvSHInstall(install):
 
 setup(
     name='virtualenv-sh',
-    version='1.0',
+    version='0.1',
     description='Convenient shell interface to virtualenv',
-    long_description='''This is a leaner, faster derivative of virtualenvwrapper. the interface should be familiar to virtualenvwrapper users, minus the expensive parts. This project prioritizes speed avove all else.''',
+    long_description=open('README').read(),
     url='https://bitbucket.org/psagers/virtualenv-sh',
     author='Peter Sagerson',
     author_email='psagers.pypi@ignorare.net',
@@ -27,8 +27,9 @@ setup(
     packages=[],
     classifiers=[
         'Programming Language :: Unix Shell',
-        'Operating System :: POSIX',
+        'Environment :: Console',
         'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
         'License :: Public Domain',
     ],
     keywords=['virtualenv'],
