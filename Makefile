@@ -63,7 +63,7 @@ build/virtualenv-sh.zsh build/virtualenv-sh.zwc: $(base_functions) $(zsh_functio
 	@mkdir -p build/zsh
 	cp $^ build/zsh
 	bin/build-monolithic.sh build/zsh/* > build/virtualenv-sh.zsh
-	bin/compile-all.zsh build/zsh/*
+	if [ $$(which zsh) ]; then zsh bin/compile-all.zsh build/zsh/*; fi
 	@rm -r build/zsh
 	@echo
 
@@ -77,7 +77,8 @@ install-bash: bash
 	cp build/virtualenv-sh.bash /usr/local/bin
 
 install-zsh: zsh
-	cp build/virtualenv-sh.zsh build/virtualenv-sh.zwc /usr/local/bin
+	cp build/virtualenv-sh.zsh /usr/local/bin
+	if [ -e build/virtualenv-sh.zwc ]; then cp build/virtualenv-sh.zwc /usr/local/bin; fi
 
 
 clean:
