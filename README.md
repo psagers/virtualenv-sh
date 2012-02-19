@@ -121,7 +121,7 @@ Hooks
 
 virtualenv-sh supports the same global and local (per-env) hooks as
 virtualenvwrapper. Global hooks are files in $WORKON\_HOME; local hooks are
-files in $WORKON\_HOME/&lt;virtual\_env&gt;/bin. Hooks are executed by
+files in $WORKON\_HOME/\<virtual\_env\>/bin. Hooks are executed by
 sourcing them in the current shell context.
 
   * initialize (global)
