@@ -46,7 +46,7 @@ sh: build/virtualenv-sh.sh
 build/virtualenv-sh.sh: $(base_functions)
 	@mkdir -p build/sh
 	cp $^ build/sh
-	bin/build-monolithic.sh build/sh/* > build/virtualenv-sh.sh
+	sh bin/build-monolithic.sh build/sh/* > build/virtualenv-sh.sh
 	@rm -r build/sh
 	@echo
 
@@ -54,7 +54,7 @@ bash: build/virtualenv-sh.bash
 build/virtualenv-sh.bash: $(base_functions) $(bash_functions)
 	@mkdir -p build/bash
 	cp $^ build/bash
-	bin/build-monolithic.sh build/bash/* > build/virtualenv-sh.bash
+	sh bin/build-monolithic.sh build/bash/* > build/virtualenv-sh.bash
 	@rm -r build/bash
 	@echo
 
@@ -62,7 +62,7 @@ zsh: build/virtualenv-sh.zsh build/virtualenv-sh.zwc
 build/virtualenv-sh.zsh build/virtualenv-sh.zwc: $(base_functions) $(zsh_functions)
 	@mkdir -p build/zsh
 	cp $^ build/zsh
-	bin/build-monolithic.sh build/zsh/* > build/virtualenv-sh.zsh
+	sh bin/build-monolithic.sh build/zsh/* > build/virtualenv-sh.zsh
 	if [ $$(which zsh) ]; then zsh bin/compile-all.zsh build/zsh/*; fi
 	@rm -r build/zsh
 	@echo
