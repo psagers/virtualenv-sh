@@ -26,6 +26,13 @@ your own risk.
 Installing
 ==========
 
+At present, this can't be installed by pip or easy_install, so it takes a
+couple of steps::
+
+    > pip install --no-install virtualenv-sh
+    > cd build/virtualenv-sh
+    > sudo python setup.py install
+
 Building this project generates a file of shell functions that must be sourced
 in your shell environment; it will be installed to /usr/local/bin. If you're
 using bash or zsh, you should import the shell-specific script; otherwise, you
