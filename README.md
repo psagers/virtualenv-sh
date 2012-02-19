@@ -3,7 +3,7 @@ virtualenv-sh
 
 This project is a replacement for the venerable virtualenvwrapper (a set of
 shell functions to facilitate the use of virtualenv
-[http://pypi.python.org/pypi/virtualenv]). Like many, I've used
+(<http://pypi.python.org/pypi/virtualenv>)). Like many, I've used
 virtualenvwrapper for years, but it's gotten a bit heavy over time. I
 eventually found myself waiting too long for new shells to start up, even
 though I tended to use only the most basic virtualenvwrapper features.
@@ -121,7 +121,7 @@ Hooks
 
 virtualenv-sh supports the same global and local (per-env) hooks as
 virtualenvwrapper. Global hooks are files in $WORKON\_HOME; local hooks are
-files in $WORKON\_HOME/\<virtual\_env\>/bin. Hooks are executed by
+files in $WORKON\_HOME/\{virtual\_env\}/bin. Hooks are executed by
 sourcing them in the current shell context.
 
   * initialize (global)
