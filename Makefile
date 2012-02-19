@@ -1,4 +1,6 @@
 VPATH = functions
+BUILD = _build
+SCRIPTS = scripts
 
 base_functions = \
 	autoworkon \
@@ -42,69 +44,71 @@ zsh_functions = \
 
 all: sh bash zsh
 
-sh: build/virtualenv-sh.sh
-build/virtualenv-sh.sh: $(base_functions)
-	@mkdir -p build/sh
-	cp $^ build/sh
-	sh bin/build-monolithic.sh build/sh/* > build/virtualenv-sh.sh
-	@rm -r build/sh
+sh: build-prep $(SCRIPTS)/virtualenv-sh.sh
+$(SCRIPTS)/virtualenv-sh.sh: $(base_functions)
+	rm $(BUILD)/* || true
+	cp $^ $(BUILD)
+	sh bin/build-monolithic.sh $(BUILD)/* > $(SCRIPTS)/virtualenv-sh.sh
 	@echo
 
-bash: build/virtualenv-sh.bash
-build/virtualenv-sh.bash: $(base_functions) $(bash_functions)
-	@mkdir -p build/bash
-	cp $^ build/bash
-	sh bin/build-monolithic.sh build/bash/* > build/virtualenv-sh.bash
-	@rm -r build/bash
+bash: build-prep $(SCRIPTS)/virtualenv-sh.bash
+$(SCRIPTS)/virtualenv-sh.bash: $(base_functions) $(bash_functions)
+	rm $(BUILD)/* || true
+	cp $^ $(BUILD)
+	sh bin/build-monolithic.sh $(BUILD)/* > $(SCRIPTS)/virtualenv-sh.bash
 	@echo
 
-zsh: build/virtualenv-sh.zsh build/virtualenv-sh.zwc
-build/virtualenv-sh.zsh build/virtualenv-sh.zwc: $(base_functions) $(zsh_functions)
-	@mkdir -p build/zsh
-	cp $^ build/zsh
-	sh bin/build-monolithic.sh build/zsh/* > build/virtualenv-sh.zsh
-	if [ $$(which zsh) ]; then zsh bin/compile-all.zsh build/zsh/*; fi
-	@rm -r build/zsh
+zsh: build-prep $(SCRIPTS)/virtualenv-sh.zsh $(SCRIPTS)/virtualenv-sh.zwc
+$(SCRIPTS)/virtualenv-sh.zsh $(SCRIPTS)/virtualenv-sh.zwc: $(base_functions) $(zsh_functions)
+	rm $(BUILD)/* || true
+	cp $^ $(BUILD)
+	sh bin/build-monolithic.sh $(BUILD)/* > $(SCRIPTS)/virtualenv-sh.zsh
+	if [ $$(which zsh) ]; then zsh -c "zcompile -U $(SCRIPTS)/virtualenv-sh.zwc $(BUILD)/*"; fi
 	@echo
+
+build-prep:
+	mkdir -p $(SCRIPTS)
+	mkdir -p $(BUILD)
 
 
 install: install-sh install-bash install-zsh
 
 install-sh: sh
-	cp build/virtualenv-sh.sh /usr/local/bin
+	cp $(SCRIPTS)/virtualenv-sh.sh /usr/local/bin
 
 install-bash: bash
-	cp build/virtualenv-sh.bash /usr/local/bin
+	cp $(SCRIPTS)/virtualenv-sh.bash /usr/local/bin
 
 install-zsh: zsh
-	cp build/virtualenv-sh.zsh /usr/local/bin
-	if [ -e build/virtualenv-sh.zwc ]; then cp build/virtualenv-sh.zwc /usr/local/bin; fi
+	cp $(SCRIPTS)/virtualenv-sh.zsh /usr/local/bin
+	if [ -e $(SCRIPTS)/virtualenv-sh.zwc ]; then cp $(SCRIPTS)/virtualenv-sh.zwc /usr/local/bin; fi
 
 
 clean:
-	rm -rf build/*
+	rm -rf $(BUILD)/* || true
+	rm -rf $(SCRIPTS)/* || true
 
 
 test: test-sh test-bash test-ksh test-zsh
 
 test-sh: sh
 	@echo Testing with $$(which sh)
-	@cd test; if [ $$(which sh) ]; then sh ./test.sh ../build/virtualenv-sh.sh; else echo "sh is not in the path"; fi
+	@cd test; if [ $$(which sh) ]; then sh ./test.sh ../$(SCRIPTS)/virtualenv-sh.sh; else echo "sh is not in the path"; fi
 	@echo
 
 test-bash: bash
 	@echo Testing with $$(which bash)
-	@cd test; if [ $$(which bash) ]; then bash ./test.sh ../build/virtualenv-sh.bash; else echo "bash is not in the path"; fi
+	@cd test; if [ $$(which bash) ]; then bash ./test.sh ../$(SCRIPTS)/virtualenv-sh.bash; else echo "bash is not in the path"; fi
 	@echo
 
 test-ksh: sh
 	@echo Testing with $$(which ksh)
-	@cd test; if [ $$(which ksh) ]; then ksh ./test.sh ../build/virtualenv-sh.sh; else echo "ksh is not in the path"; fi
+	@cd test; if [ $$(which ksh) ]; then ksh ./test.sh ../$(SCRIPTS)/virtualenv-sh.sh; else echo "ksh is not in the path"; fi
 	@echo
 
 # The current version of shunit2 doesn't seem to play well with zsh, but here
 # it is.
 test-zsh: zsh
 	@echo Testing with $$(which zsh)
-	@cd test; if [ $$(which zsh) ]; then zsh ./test.sh ../build/virtualenv-sh.zsh; else echo "zsh is not in the path"; fi
+	@cd test; if [ $$(which zsh) ]; then zsh ./test.sh ../$(SCRIPTS)/virtualenv-sh.zsh; else echo "zsh is not in the path"; fi
 	@echo

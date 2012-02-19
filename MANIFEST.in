@@ -1,5 +1,10 @@
 recursive-include bin *
 recursive-include functions *
 recursive-include test *
+recusrive-include doc *
+
+include scripts/virtualenv-sh.*sh
 
 include README LICENSE Makefile setup.py
+
+global-exclude .DS_Store
