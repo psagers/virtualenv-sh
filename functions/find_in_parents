@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# Bonus function: searches the current directly and all parents for a
+# filesystem item with a name matching any argument.
+#
+# e.g. find_in_parents .git .hg .svn
+
+if [ -n "${ZSH_VERSION:-}" ]; then
+    local chpwd chpwd_functions # zsh: disable chpwd hooks during this function
+fi
+
+if [ ! -d "${PWD}" ]; then
+    return 2
+fi
+
+_pwd_save="$PWD"
+_found_in_parents=
+
+while [ -z "${_found_in_parents}" ]; do
+    for target in "$@"; do
+        if [ -e "./$target" ]; then
+            echo "${PWD}/${target}"
+            _found_in_parents=1
+        fi
+    done
+
+    if [ "${PWD}" = "/" ]; then
+        _found_in_parents=0
+    else
+        cd ..
+    fi
+done
+
+cd "${_pwd_save}"
+
+unset _pwd_save
+
+[ ${_found_in_parents} -eq 1 ]

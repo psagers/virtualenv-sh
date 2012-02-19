@@ -2,25 +2,27 @@
 
 virtualenv_sh_verify_workon_home || return 1
 
-eval "env_name=\$$#"
+eval "_mkvirtualenv_env_name=\$$#"
 
 # If the last argument is an option, assume we're not actually making a
 # virtualenv.
-if [ ${env_name#-} != ${env_name} ]; then
-    env_name=
+if [ ${_mkvirtualenv_env_name#-} != ${_mkvirtualenv_env_name} ]; then
+    _mkvirtualenv_env_name=
 fi
 
 
-if [ ${env_name} ]; then
-    virtualenv_sh_run_hook "premkvirtualenv" "$env_name"
+if [ -n "${_mkvirtualenv_env_name}" ]; then
+    virtualenv_sh_run_hook "premkvirtualenv" "${_mkvirtualenv_env_name}"
 fi
 
 ( cd ${WORKON_HOME}
   virtualenv "$@" 
 ) || return 1
 
-if [ ${env_name} ]; then
-    virtualenv_sh_run_hook "postmkvirtualenv" "$env_name"
+if [ -n "${_mkvirtualenv_env_name}" ]; then
+    virtualenv_sh_run_hook "postmkvirtualenv" "${_mkvirtualenv_env_name}"
 
-    workon ${env_name}
+    workon ${_mkvirtualenv_env_name}
 fi
+
+unset _mkvirtualenv_env_name

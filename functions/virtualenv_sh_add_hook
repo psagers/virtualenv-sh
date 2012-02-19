@@ -7,7 +7,7 @@
 # $2 is the function name
 
 for item in ${_virtualenv_sh_hook_functions:-}; do
-    if [ $item = $1/$2 ]; then
+    if [ "$item" = "$1/$2" ]; then
         return 0
     fi
 done

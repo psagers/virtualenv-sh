@@ -8,8 +8,8 @@
 
 _virtualenv_sh_hook_functions=$(
     for item in ${_virtualenv_sh_hook_functions:-}; do
-        if [ ! $item = $1/$2 ]; then
-            echo -n " $item"
+        if [ ! "$item" = "$1/$2" ]; then
+            printf " %s" "$item"
         fi
     done
 )

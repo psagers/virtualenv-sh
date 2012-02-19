@@ -1,15 +1,17 @@
 VPATH = functions
 
 base_functions = \
+	autoworkon \
 	cdsitepackages \
 	cdvirtualenv \
+	find_in_parents \
 	lssitepackages \
 	lsvirtualenvs \
 	mkvirtualenv \
 	rmvirtualenv \
 	virtualenv_sh_add_hook \
 	virtualenv_sh_init \
-	virtualenv_sh_init_shell \
+	virtualenv_sh_init_features \
 	virtualenv_sh_remove_hook \
 	virtualenv_sh_restore_options \
 	virtualenv_sh_run_global_hook \
@@ -27,14 +29,14 @@ bash_functions = \
 	bash/_virtualenv_sh_complete_cdvirtualenv \
 	bash/_virtualenv_sh_complete_sitepackages \
 	bash/_virtualenv_sh_complete_virtualenvs \
-	bash/virtualenv_sh_init_shell
+	bash/virtualenv_sh_init_features
 
 zsh_functions = \
 	zsh/_virtualenv_sh_complete_virtualenvs \
 	zsh/virtualenv_sh_add_hook \
 	zsh/virtualenv_sh_complete_cdvirtualenv \
 	zsh/virtualenv_sh_complete_sitepackages \
-	zsh/virtualenv_sh_init_shell \
+	zsh/virtualenv_sh_init_features \
 	zsh/virtualenv_sh_remove_hook
 
 
@@ -65,23 +67,43 @@ build/virtualenv-sh.zsh build/virtualenv-sh.zwc: $(base_functions) $(zsh_functio
 	@rm -r build/zsh
 	@echo
 
-install: all
-	cp build/* /usr/local/bin
+
+install: install-sh install-bash install-zsh
+
+install-sh: sh
+	cp build/virtualenv-sh.sh /usr/local/bin
+
+install-bash: bash
+	cp build/virtualenv-sh.bash /usr/local/bin
+
+install-zsh: zsh
+	cp build/virtualenv-sh.zsh build/virtualenv-sh.zwc /usr/local/bin
+
 
 clean:
 	rm -rf build/*
 
 
-test: test-bash test-ksh test-zsh
+test: test-sh test-bash test-ksh test-zsh
+
+test-sh: sh
+	@echo Testing with $$(which sh)
+	@cd test; if [ $$(which sh) ]; then sh ./test.sh ../build/virtualenv-sh.sh; else echo "sh is not in the path"; fi
+	@echo
 
 test-bash: bash
 	@echo Testing with $$(which bash)
 	@cd test; if [ $$(which bash) ]; then bash ./test.sh ../build/virtualenv-sh.bash; else echo "bash is not in the path"; fi
+	@echo
 
 test-ksh: sh
 	@echo Testing with $$(which ksh)
 	@cd test; if [ $$(which ksh) ]; then ksh ./test.sh ../build/virtualenv-sh.sh; else echo "ksh is not in the path"; fi
+	@echo
 
+# The current version of shunit2 doesn't seem to play well with zsh, but here
+# it is.
 test-zsh: zsh
 	@echo Testing with $$(which zsh)
 	@cd test; if [ $$(which zsh) ]; then zsh ./test.sh ../build/virtualenv-sh.zsh; else echo "zsh is not in the path"; fi
+	@echo

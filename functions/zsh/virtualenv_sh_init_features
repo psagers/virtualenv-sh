@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+_virtualenv_sh_hook_functions=()
+
 compctl -K _virtualenv_sh_complete_virtualenvs workon rmvirtualenv
 compctl -K virtualenv_sh_complete_cdvirtualenv cdvirtualenv
 compctl -K virtualenv_sh_complete_sitepackages cdsitepackages

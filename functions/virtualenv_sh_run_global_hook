@@ -3,5 +3,5 @@
 # $1 is the hook name
 
 if [ -n "${WORKON_HOME}" ] && [ -r "${WORKON_HOME}/$1" ]; then
-    source "${WORKON_HOME}/$1"
+    . "${WORKON_HOME}/$1"
 fi
