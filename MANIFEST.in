@@ -1,0 +1,5 @@
+recursive-include bin *
+recursive-include functions *
+recursive-include test *
+
+include Makefile README README.md LICENSE setup.py
