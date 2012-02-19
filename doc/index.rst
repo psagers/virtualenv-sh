@@ -26,18 +26,12 @@ your own risk.
 Installing
 ==========
 
-At present, this can't be installed by pip or easy_install, so it takes a
-couple of steps::
-
-    > pip install --no-install virtualenv-sh
-    > cd build/virtualenv-sh
-    > sudo python setup.py install
-
-Building this project generates a file of shell functions that must be sourced
-in your shell environment; it will be installed to /usr/local/bin. If you're
-using bash or zsh, you should import the shell-specific script; otherwise, you
-can try the generic one. Add *one* of the following to your shell's init
-script (.bashrc, .zshrc, etc.)::
+virtualenv-sh can be installed with pip or easy_install. To use it, you need
+to source a single shell script in your shell environment. By default, pip or
+easy_install should install it to /usr/local/bin. If you're using bash or zsh,
+you should import the shell-specific script; otherwise, you can try the
+generic one. Add *one* of the following to your shell's init script (.bashrc,
+.zshrc, etc.)::
 
     . /usr/local/bin/virtualenv-sh.bash
 
@@ -49,17 +43,6 @@ script (.bashrc, .zshrc, etc.)::
 
     . /usr/local/bin/virtualenv-sh.sh
 
-If you're using zsh, you can instead use the precompiled function archive for
-optimal performance. You may want to refer to the section on function
-autoloading in the zsh manual if you're not familiar with this process::
-
-    # Configure all virtualenv-sh functions for autoloading
-    fpath=(/usr/local/bin/virtualenv-sh $fpath)
-    autoload -w /usr/local/bin/virtualenv-sh
-
-    # Call the main initialization function
-    virtualenv_sh_init
-
 Nothing else is required. There's only one environment variable that you can
 use for configuration, which is WORKON_HOME. This is a path to your collection
 of virutalenvs; you can leave it blank to accept the default of
@@ -69,6 +52,30 @@ path.
 ::
 
     WORKON_HOME=${HOME}/.virtualenvs
+
+
+zsh
+---
+
+If you're using zsh, you can instead use the precompiled function archive for
+optimal performance, although this needs to be compiled from source on your
+machine. You can download the source directly or try::
+
+    > pip install --upgrade --no-install virtualenv-sh
+    > cd build/virtualenv-sh
+    > sudo make install
+
+This will find zsh in your path, use it to compile virtualenv-sh.zwc, and
+install it to /usr/local/bin. You can now autoload these functions and
+initialize virtualenv-sh. You may want to refer to the section on function
+autoloading in the zsh manual if you're not familiar with this process::
+
+    # Configure all virtualenv-sh functions for autoloading
+    fpath=(/usr/local/bin/virtualenv-sh $fpath)
+    autoload -w /usr/local/bin/virtualenv-sh
+
+    # Call the main initialization function
+    virtualenv_sh_init
 
 
 Using

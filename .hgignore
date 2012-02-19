@@ -1,4 +1,5 @@
-^build/
+^_build/
+^scripts/
 ^doc/_build/
 ^dist/
 ^MANIFEST$

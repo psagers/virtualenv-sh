@@ -1,18 +1,4 @@
-import subprocess
-
-from distutils.command.build import build
-from distutils.command.install import install
 from distutils.core import setup
-
-
-class VirtualenvSHBuild(build):
-    def run(self):
-        subprocess.call(['make'])
-
-
-class VirtualenvSHInstall(install):
-    def run(self):
-        subprocess.call(['make', 'install'])
 
 
 setup(
@@ -25,6 +11,11 @@ setup(
     author_email='psagers.pypi@ignorare.net',
     license='BSD, Public Domain',
     packages=[],
+    scripts=[
+        'scripts/virtualenv-sh.sh',
+        'scripts/virtualenv-sh.bash',
+        'scripts/virtualenv-sh.zsh',
+    ],
     classifiers=[
         'Programming Language :: Unix Shell',
         'Environment :: Console',
@@ -33,5 +24,4 @@ setup(
         'License :: Public Domain',
     ],
     keywords=['virtualenv'],
-    cmdclass={'build': VirtualenvSHBuild, 'install': VirtualenvSHInstall},
 )
