@@ -1,12 +1,14 @@
 #!/bin/sh
 
+virtualenv_sh_verify_workon_home || return 1
+
 if [ -z "${1:-}" ]; then
     lsvirtualenvs
     return 1
 fi
 
-activate="$WORKON_HOME/$1/bin/activate"
-if [ ! -f "$activate" ]; then
+_activate="$WORKON_HOME/$1/bin/activate"
+if [ ! -f "$_activate" ]; then
     echo "ERROR: '$WORKON_HOME/$1' is not a virtualenv." >&2
     return 1
 fi
@@ -19,12 +21,12 @@ virtualenv_sh_run_hook "preactivate" "$1"
 
 # virtualenv's scripts choke on nounset
 virtualenv_sh_save_options && set +o nounset
-source "$activate"
+. "$_activate"
 virtualenv_sh_restore_options
 
 # Save the deactivate function from virtualenv under a different name
-virtualen_sh_original_deactivate=`typeset -f deactivate | sed 's/deactivate/virtualenv_deactivate/g'`
-eval "$virtualen_sh_original_deactivate"
+_virtualenv_sh_original_deactivate=`typeset -f deactivate | sed 's/deactivate/virtualenv_deactivate/g'`
+eval "$_virtualenv_sh_original_deactivate"
 unset -f deactivate >/dev/null 2>&1
 
 # Replace the deactivate() function with a wrapper.
@@ -33,14 +35,14 @@ eval 'deactivate () {
     
     # Call the local hook before the global so we can undo
     # any settings made by the local postactivate first.
-    virtualenv_sh_run_hook "predeactivate" "$old_env"
+    virtualenv_sh_run_hook "predeactivate" "${old_env}"
     
     # Call the original function.
     virtualenv_sh_save_options && set +o nounset
     virtualenv_deactivate "$@"
     virtualenv_sh_restore_options
 
-    virtualenv_sh_run_hook "postdeactivate" "$old_env"
+    virtualenv_sh_run_hook "postdeactivate" "${old_env}"
 
     if [ ! "${1:-}" = "nondestructive" ]; then
         # Remove this function

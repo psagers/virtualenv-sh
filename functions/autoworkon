@@ -1,0 +1,35 @@
+#!/bin/sh
+
+virtualenv_sh_verify_workon_home || return 1
+
+
+# Never override a manually set virtualenv.
+if [ -n "${VIRTUAL_ENV:-}" ] && [ ! "${VIRTUAL_ENV:-}" = "${_virtualenv_sh_auto_virtualenv:-}" ]; then
+    return 0
+fi
+
+
+# Look for a .workon file in our path. This should contain the name of a
+# virtualenv in $WORKON_HOME.
+_dot_workon=$(find_in_parents .workon)
+
+if [ -r "${_dot_workon}" ]; then
+    read _new_virtualenv < "${_dot_workon}"
+fi
+
+
+# Update the virtualenv, if warranted.
+if [ -n "${_new_virtualenv:-}" ]; then
+    if [ ! "${_new_virtualenv}" = "${VIRTUAL_ENV##*/}" ]; then
+        workon "${_new_virtualenv}"
+        _virtualenv_sh_auto_virtualenv="${VIRTUAL_ENV:-}"
+    fi
+else
+    if [ -n "${_virtualenv_sh_auto_virtualenv:-}" ]; then
+        deactivate
+    fi
+fi
+
+
+unset _dot_workon
+unset _new_virtualenv

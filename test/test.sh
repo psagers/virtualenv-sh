@@ -18,9 +18,13 @@ oneTimeSetUp()
 
     { echo
       for hook in $(local_hooks); do
-          echo "echo report_hook_invoked \${env_name} ${hook} > \${WORKON_HOME}/\${env_name}/bin/${hook}"
+          echo "echo report_hook_invoked \$2 ${hook} > \${WORKON_HOME}/\$2/bin/${hook}"
       done
     } >> $WORKON_HOME/postmkvirtualenv
+
+    mkvirtualenv test1 >/dev/null
+
+    tearDown
 }
 
 
@@ -32,6 +36,7 @@ oneTimeTearDown()
 
 tearDown()
 {
+    deactivate >/dev/null 2>&1
     clear_hooks_invoked
     clear_custom_hooks_invoked
 }
@@ -107,34 +112,36 @@ custom_hook_2()
 #
 # Test cases
 #
-test_initialized()
-{
-    assertTrue "[ -d $WORKON_HOME ]";
-    assertEquals $(lsvirtualenvs) ""
-}
 
-test_one_virtualenv()
+test_workon()
 {
-    mkvirtualenv test1 >/dev/null
+    workon test1
 
-    assertTrue "[ -e $WORKON_HOME/test1/bin/activate ]"
-    assertEquals "test1 " "$(lsvirtualenvs | tr $'\n' ' ')"
-    assertHooksInvoked global/premkvirtualenv global/postmkvirtualenv \
-                       global/preactivate test1/preactivate \
+    assertEquals "${VIRTUAL_ENV:-}" "${WORKON_HOME:-}/test1"
+    assertHooksInvoked global/preactivate test1/preactivate \
                        global/postactivate test1/postactivate
 }
 
-test_two_virtualenvs()
+test_deactivate()
 {
-    mkvirtualenv test1 >/dev/null
-    clear_hooks_invoked
+    workon test1
+    deactivate
+
+    assertEquals "${VIRTUAL_ENV:-}" ""
+    assertHooksInvoked global/preactivate test1/preactivate \
+                       global/postactivate test1/postactivate \
+                       test1/predeactivate global/predeactivate \
+                       test1/postdeactivate global/postdeactivate
+}
+
+test_make_virtualenv()
+{
     mkvirtualenv test2 >/dev/null
 
+    assertTrue "[ -e ${WORKON_HOME:-}/test2/bin/activate ]"
     assertEquals "test1 test2 " "$(lsvirtualenvs | tr $'\n' ' ')"
-    assertEquals "$VIRTUAL_ENV" "$WORKON_HOME/test2"
+    assertEquals "${VIRTUAL_ENV:-}" "${WORKON_HOME:-}/test2"
     assertHooksInvoked global/premkvirtualenv global/postmkvirtualenv \
-                       test1/predeactivate global/predeactivate \
-                       test1/postdeactivate global/postdeactivate \
                        global/preactivate test2/preactivate \
                        global/postactivate test2/postactivate
 }
@@ -166,7 +173,7 @@ test_duplicate_hook()
     virtualenv_sh_add_hook preactivate custom_hook_1
     virtualenv_sh_add_hook preactivate custom_hook_1
 
-    assertEquals "preactivate/custom_hook_1" "$(echo $_virtualenv_sh_hook_functions)"
+    assertEquals "preactivate/custom_hook_1" "$(echo ${_virtualenv_sh_hook_functions})"
 }
 
 test_two_hooks()
@@ -174,7 +181,7 @@ test_two_hooks()
     virtualenv_sh_add_hook preactivate custom_hook_1
     virtualenv_sh_add_hook preactivate custom_hook_2
 
-    assertEquals "preactivate/custom_hook_1 preactivate/custom_hook_2" "$(echo $_virtualenv_sh_hook_functions)"
+    assertEquals "preactivate/custom_hook_1 preactivate/custom_hook_2" "$(echo ${_virtualenv_sh_hook_functions})"
 }
 
 test_two_minus_one_hooks()
@@ -183,7 +190,7 @@ test_two_minus_one_hooks()
     virtualenv_sh_add_hook preactivate custom_hook_2
     virtualenv_sh_remove_hook preactivate custom_hook_1
 
-    assertEquals "preactivate/custom_hook_2" "$(echo $_virtualenv_sh_hook_functions)"
+    assertEquals "preactivate/custom_hook_2" "$(echo ${_virtualenv_sh_hook_functions})"
 }
 
 test_run_hook()
@@ -193,6 +200,56 @@ test_run_hook()
     virtualenv_sh_run_hook_functions postactivate
 
     assertHookFuncsInvoked "custom_hook_2"
+}
+
+test_autoworkon()
+{
+    mkdir -p auto/workon
+    echo test1 > auto/workon/.workon
+
+    cd auto/workon
+    autoworkon
+    assertEquals "${WORKON_HOME:-}/test1" "${VIRTUAL_ENV:-}"
+
+    cd ../..
+    rm -rf auto
+}
+
+test_autoworkon_deactivate()
+{
+    mkdir -p auto/workon
+    echo test1 > auto/workon/.workon
+
+    cd auto/workon
+    autoworkon
+    cd ../..
+    autoworkon
+
+    assertEquals "" "${VIRTUAL_ENV:-}"
+    rm -rf auto
+}
+
+test_autoworkon_preserve()
+{
+    mkvirtualenv test2 >/dev/null
+    mkdir -p auto/workon
+    echo test2 > auto/workon/.workon
+
+    workon test1
+    cd auto/workon
+    autoworkon
+    cd ../..
+
+    assertEquals "${WORKON_HOME:-}/test1" "${VIRTUAL_ENV:-}"
+    rm -rf auto
+}
+
+test_autoworkon_preserve2()
+{
+    workon test1
+    autoworkon
+
+    assertEquals "${VIRTUAL_ENV:-}" "${WORKON_HOME:-}/test1"
 }
 
 

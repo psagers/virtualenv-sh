@@ -24,6 +24,6 @@ if [ ! -e "$WORKON_HOME" ]; then
     done
 fi
 
-virtualenv_sh_init_shell
+virtualenv_sh_init_features
 
 virtualenv_sh_run_hook "initialize"
