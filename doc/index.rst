@@ -184,7 +184,7 @@ you're using zsh, you would use::
 The autoworkon function will walk up the filesystem from the current directory
 until it either reaches the root or finds an item named ".workon". If this is
 a readable file, it will treat the first line as the name of a virtual_env and
-activate it. There are a couple of special rules to keep in mind:
+activate it. There are a few special rules to keep in mind:
 
   * autoworkon always stops at the first .workon it finds. It's perfectly
     reasonable to have .workon files at multiple points in a directory tree to
