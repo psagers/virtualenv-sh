@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+local env_name
+
+select env_name in $(lsvirtualenvs); do
+    workon ${env_name};
+    break;
+done
