@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name='virtualenv-sh',
-    version='0.1',
+    version='0.2',
     description='Convenient shell interface to virtualenv',
     long_description=open('README').read(),
     url='https://bitbucket.org/psagers/virtualenv-sh',

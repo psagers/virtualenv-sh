@@ -99,7 +99,8 @@ virtualenvwrapper. Here's a brief recap:
 
     Activates the named virtual_env. If another virtual_env is currently
     active, it will be deactivated first. Without arguments, it will list the
-    available virtual_envs.
+    available virtual_envs. In compatible shells, you can choose a virtual_env
+    from a menu.
 
   ``autoworkon``
 
