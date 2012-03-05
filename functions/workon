@@ -3,7 +3,7 @@
 virtualenv_sh_verify_workon_home || return 1
 
 if [ -z "${1:-}" ]; then
-    lsvirtualenvs
+    virtualenv_sh_workon_list
     return 1
 fi
 

@@ -25,13 +25,15 @@ base_functions = \
 	virtualenv_sh_verify_active_virtualenv \
 	virtualenv_sh_verify_workon_home \
 	virtualenv_sh_virtualenvs \
+	virtualenv_sh_workon_list \
 	workon
 
 bash_functions = \
 	bash/_virtualenv_sh_complete_cdvirtualenv \
 	bash/_virtualenv_sh_complete_sitepackages \
 	bash/_virtualenv_sh_complete_virtualenvs \
-	bash/virtualenv_sh_init_features
+	bash/virtualenv_sh_init_features \
+	bash/virtualenv_sh_workon_list
 
 zsh_functions = \
 	zsh/_virtualenv_sh_complete_virtualenvs \
@@ -39,6 +41,7 @@ zsh_functions = \
 	zsh/virtualenv_sh_complete_cdvirtualenv \
 	zsh/virtualenv_sh_complete_sitepackages \
 	zsh/virtualenv_sh_init_features \
+	zsh/virtualenv_sh_workon_list \
 	zsh/virtualenv_sh_remove_hook
 
 
