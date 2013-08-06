@@ -50,21 +50,21 @@ all: sh bash zsh
 sh: build-prep $(SCRIPTS)/virtualenv-sh.sh
 $(SCRIPTS)/virtualenv-sh.sh: $(base_functions)
 	rm $(BUILD)/* || true
-	cp $^ $(BUILD)
+	for file in $^; do cp $${file} $(BUILD); done
 	sh bin/build-monolithic.sh $(BUILD)/* > $(SCRIPTS)/virtualenv-sh.sh
 	@echo
 
 bash: build-prep $(SCRIPTS)/virtualenv-sh.bash
 $(SCRIPTS)/virtualenv-sh.bash: $(base_functions) $(bash_functions)
 	rm $(BUILD)/* || true
-	cp $^ $(BUILD)
+	for file in $^; do cp $${file} $(BUILD); done
 	sh bin/build-monolithic.sh $(BUILD)/* > $(SCRIPTS)/virtualenv-sh.bash
 	@echo
 
 zsh: build-prep $(SCRIPTS)/virtualenv-sh.zsh $(SCRIPTS)/virtualenv-sh.zwc
 $(SCRIPTS)/virtualenv-sh.zsh $(SCRIPTS)/virtualenv-sh.zwc: $(base_functions) $(zsh_functions)
 	rm $(BUILD)/* || true
-	cp $^ $(BUILD)
+	for file in $^; do cp $${file} $(BUILD); done
 	sh bin/build-monolithic.sh $(BUILD)/* > $(SCRIPTS)/virtualenv-sh.zsh
 	if [ $$(which zsh) ]; then zsh -c "zcompile -U $(SCRIPTS)/virtualenv-sh.zwc $(BUILD)/*"; fi
 	@echo
